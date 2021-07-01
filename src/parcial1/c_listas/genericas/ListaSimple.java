@@ -1,17 +1,29 @@
-package parcial1.c_listas;
+package parcial1.c_listas.genericas;
 
-import java.util.ArrayList;
-
-public class ListaSimple {
-    Nodo primero;
-    Nodo ultimo;
+public class ListaSimple<E> {
+    Nodo<E> primero;
+    Nodo<E> ultimo;
     int conteo;
 
-    public ListaSimple(int datoInicial) {
+    public ListaSimple(E datoInicial) {
         this.insertarPrimerNodo(datoInicial);
     }
 
-    private void insertarPrimerNodo(int dato) {
+    public E getPrimero() throws Exception {
+        if (this.estaVacia()) {
+            throw new Exception("Lista vacia");
+        }
+        return this.primero.getDato();
+    }
+
+    public E getUltimo() throws Exception {
+        if (this.estaVacia()) {
+            throw new Exception("Lista vacia");
+        }
+        return this.ultimo.getDato();
+    }
+
+    private void insertarPrimerNodo(E dato) {
         Nodo nuevo = new Nodo(dato);
         this.primero = this.ultimo = nuevo;
         this.conteo = 1;
@@ -27,33 +39,29 @@ public class ListaSimple {
         return this.primero == null && this.ultimo == null;
     }
 
-    public void insertarPrimero(int dato) {
-        /*
-        1. Crear el nuevo nodo
-        2. Enlazar el nuevo nodo al primer nodo
-        3. Puntero PRIMERO apunta al nuevo nodo (el cual es el primero ahora)
-         */
+    public void insertarPrimero(E dato) {
         Nodo nuevo = new Nodo(dato);
         nuevo.setSiguiente(primero);
         this.primero = nuevo;
         this.conteo++;
     }
 
-    public void insertarUltimo(int dato) {
+    public void insertarUltimo(E dato) {
         Nodo nuevo = new Nodo(dato);
         this.ultimo.setSiguiente(nuevo);
         this.ultimo = nuevo;
         this.conteo++;
     }
 
-    public int eliminarPrimero() throws Exception {
+    public E eliminarPrimero() throws Exception {
         if (this.estaVacia()) {
             throw new Exception("Lista esta vacia.");
         }
+
         // Almacenar el primero que esta a punto de eliminarse.
         Nodo temp = this.primero;
         this.primero = this.primero.getSiguiente();
-        int valor = temp.getDato();
+        E valor = (E)temp.getDato();
         temp = null;
 
         if (this.primero == null) {
@@ -64,55 +72,41 @@ public class ListaSimple {
         return valor;
     }
 
-    public int eliminarUltimo() throws Exception {
-        int valor;
+    public E eliminarUltimo() throws Exception {
         if (this.estaVacia()) {
             throw new Exception("Lista esta vacia.");
         }
 
+        E valor;
         Nodo previo = this.primero;
         Nodo proximo = previo.getSiguiente();
 
         // que pasa con LE con un 1 nodo
         if (previo == ultimo) {
-            valor = previo.getDato();
+            valor = (E)previo.getDato();
             this.vaciar();
-            return valor;
+        } else {
+            // Bucle para hallar al penultimo
+            while (proximo != this.ultimo) {
+                previo = proximo;
+                proximo = proximo.getSiguiente();
+            }
+
+            valor = (E) proximo.getDato();
+            previo.setSiguiente(null);
+            this.ultimo = previo;
         }
 
-        // Bucle para hallar al penultimo
-        while(proximo != this.ultimo) {
-            previo = proximo;
-            proximo = proximo.getSiguiente();
-        }
-
-        valor = proximo.getDato();
-        previo.setSiguiente(null);
-        this.ultimo = previo;
         this.conteo--;
         proximo = null;
         return valor;
     }
 
-    // O(1)
-    public int getConteoConstante() {
+    public int getConteo() {
         return this.conteo;
     }
 
-    // O(n)
-    public int getConteoLineal() {
-        int conteo = 0;
-
-        if (!this.estaVacia()) {
-            for(Nodo temp = this.primero; temp != null; temp = temp.getSiguiente()) {
-                conteo++;
-            }
-        }
-
-        return conteo;
-    }
-
-    public Nodo buscar(int dato) {
+    public Nodo buscar(E dato) {
         if (this.estaVacia()) {
             return null;
         }
@@ -127,13 +121,14 @@ public class ListaSimple {
         return null;
     }
 
-    public int[] toArray() {
+    public Object[] toArray() {
         if (this.estaVacia()) {
             return null;
         }
 
-        int[] salida = new int[this.conteo];
         int indice = 0;
+        Object[] salida = new Object[this.conteo];
+
         for(Nodo temp = this.primero; temp != null; temp = temp.getSiguiente()) {
             salida[indice++] = temp.getDato();
         }
