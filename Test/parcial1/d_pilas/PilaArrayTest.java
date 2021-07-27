@@ -37,7 +37,7 @@ class PilaArrayTest {
     }
 
     @Test
-    void cuandoSeDesapila() {
+    void cuandoSeDesapila() throws Exception {
         pila.apilar(10);
         pila.apilar(20);
         assertEquals(20, pila.desapilar());

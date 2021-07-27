@@ -25,7 +25,10 @@ public class PilaArray<E> {
         }
     }
 
-    public E desapilar() {
+    public E desapilar() throws Exception {
+        if (this.estaVacia()) {
+            throw new Exception("Pila vacia");
+        }
         // Quitamos la cima actual
         E cima_anterior = this.arreglo[this.cima];
         // Esto posible porque es generico
